@@ -25,41 +25,37 @@ def perform_eda(data):
     print("\nMissing Values:")
     print(data.isnull().sum())
 
-    # Plot distribution of target variable
+   
     plt.figure(figsize=(6,4))
     sns.countplot(x='Exited', data=data)
     plt.title('Distribution of Target Variable (Exited)')
-    # plt.show()  # Commented out for terminal execution
-
-    # Plot correlation heatmap for numerical features
+ 
     plt.figure(figsize=(12,8))
     numerical_data = data.select_dtypes(include=[np.number])
     corr = numerical_data.corr()
     sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm')
     plt.title('Correlation Heatmap')
-    # plt.show()  # Commented out for terminal execution
-
+   
 def preprocess_data(data):
     """
     Preprocess the data: encode categoricals, scale features, split into train/test.
     """
-    # Drop unnecessary columns
+
     data = data.drop(['RowNumber', 'CustomerId', 'Surname'], axis=1)
 
-    # Encode categorical variables
+   
     label_encoder = LabelEncoder()
     data['Gender'] = label_encoder.fit_transform(data['Gender'])
     data = pd.get_dummies(data, columns=['Geography'], drop_first=True)
 
-    # Separate features and target
     X = data.drop('Exited', axis=1)
     y = data['Exited']
 
-    # Scale numerical features
+  
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    # Split into train and test sets
+  
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
     return X_train, X_test, y_train, y_test
@@ -84,10 +80,9 @@ if __name__ == "__main__":
     clf = train_random_forest(X_train, y_train)
     print("Random Forest model trained successfully.")
 
-    # Predict on test set
+    
     y_pred = clf.predict(X_test)
 
-    # Evaluate model
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Test Accuracy: {accuracy:.4f}")
     print("\nClassification Report:")
